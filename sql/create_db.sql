@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS app_users (
     phone_number   VARCHAR(20)  NOT NULL UNIQUE,
     password_hash  TEXT         NOT NULL,
     language       VARCHAR(10)  NOT NULL DEFAULT 'ru',
-    role           VARCHAR(20)  NOT NULL CHECK (role IN ('client', 'barista'))
+    role           VARCHAR(20)  NOT NULL CHECK (role IN ('client', 'barista', 'admin'))
 );
 
 -- 2. Заказы
@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS products (
     name         VARCHAR(150) NOT NULL,
     description  TEXT,
     category     VARCHAR(50) NOT NULL,
-    photo        BYTEA
+    photo        BYTEA,
+    is_available BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- 4. Размеры
@@ -78,8 +79,24 @@ CREATE TABLE IF NOT EXISTS order_items (
         ON DELETE RESTRICT
 );
 
+-- 7. FCM-токены устройств (для push-уведомлений)
+CREATE TABLE IF NOT EXISTS device_tokens (
+    token_id    BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    fcm_token   TEXT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_device_tokens_user
+        FOREIGN KEY (user_id)
+        REFERENCES app_users(user_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uq_device_tokens_user_token UNIQUE (user_id, fcm_token)
+);
+
 -- Индексы для ускорения выборок
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_product_sizes_product_id ON product_sizes(product_id);
 CREATE INDEX IF NOT EXISTS idx_product_sizes_size_id ON product_sizes(size_id);
+CREATE INDEX IF NOT EXISTS idx_device_tokens_user_id ON device_tokens(user_id);
