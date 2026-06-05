@@ -4,6 +4,7 @@ import '../data/mock_data.dart';
 import '../theme/app_colors.dart';
 import '../widgets/help_fab.dart';
 import '../widgets/product_card.dart';
+import 'product_detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -42,11 +43,10 @@ class HomeScreen extends StatelessWidget {
                   return ProductCard(
                     product: product,
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            '${product.name} — карточка товара скоро',
-                          ),
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) =>
+                              ProductDetailScreen(product: product),
                         ),
                       );
                     },

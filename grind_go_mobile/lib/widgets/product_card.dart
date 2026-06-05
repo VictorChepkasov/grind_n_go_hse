@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/product.dart';
 import '../theme/app_colors.dart';
+import 'product_placeholder.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -29,17 +30,9 @@ class ProductCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.accentLight.withValues(alpha: 0.45),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.local_cafe_rounded,
-                    size: 48,
-                    color: AppColors.coffee.withValues(alpha: 0.7),
-                  ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: const ProductPlaceholder(iconSize: 48),
                 ),
               ),
               const SizedBox(height: 10),
