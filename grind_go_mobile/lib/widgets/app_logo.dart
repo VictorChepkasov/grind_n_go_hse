@@ -1,57 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
-
-/// Стилизованный логотип (заглушка под mascotte из макета).
+/// Логотип приложения (mascotte Grind & Go HSE).
 class AppLogo extends StatelessWidget {
   const AppLogo({super.key, this.size = 160});
 
   final double size;
 
+  static const _assetPath = 'assets/images/logo.png';
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Image.asset(
+      _assetPath,
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: _LogoPainter(),
-        child: Center(
-          child: Icon(
-            Icons.local_cafe_rounded,
-            size: size * 0.28,
-            color: AppColors.textOnPrimary,
-          ),
-        ),
-      ),
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(
+          Icons.image_not_supported_outlined,
+          size: size * 0.4,
+        );
+      },
     );
   }
-}
-
-class _LogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bodyPaint = Paint()..color = AppColors.error;
-    final w = size.width;
-    final h = size.height;
-
-    final body = RRect.fromRectAndRadius(
-      Rect.fromLTWH(w * 0.15, h * 0.22, w * 0.7, h * 0.55),
-      Radius.circular(w * 0.22),
-    );
-    canvas.drawRRect(body, bodyPaint);
-
-    canvas.drawCircle(
-      Offset(w * 0.28, h * 0.78),
-      w * 0.09,
-      bodyPaint,
-    );
-    canvas.drawCircle(
-      Offset(w * 0.72, h * 0.78),
-      w * 0.09,
-      bodyPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
