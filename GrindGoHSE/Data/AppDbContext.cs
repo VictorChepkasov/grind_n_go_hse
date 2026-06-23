@@ -80,6 +80,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.Property(e => e.TotalPrice).HasColumnName("total_price").HasPrecision(10, 2);
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.CreatedAt);
 
             entity.HasOne(e => e.User)
                 .WithMany(u => u.Orders)

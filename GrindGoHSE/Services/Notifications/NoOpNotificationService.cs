@@ -5,9 +5,17 @@ namespace GrindGoHSE.Services.Notifications;
 /// </summary>
 public class NoOpNotificationService(ILogger<NoOpNotificationService> logger) : INotificationService
 {
-    public Task NotifyClientOrderReadyAsync(long userId, long orderId, CancellationToken cancellationToken = default)
+    public Task NotifyClientOrderStatusChangedAsync(
+        long userId,
+        long orderId,
+        string status,
+        CancellationToken cancellationToken = default)
     {
-        logger.LogDebug("FCM stub: order {OrderId} ready for user {UserId}", orderId, userId);
+        logger.LogDebug(
+            "FCM stub: order {OrderId} status «{Status}» for user {UserId}",
+            orderId,
+            status,
+            userId);
         return Task.CompletedTask;
     }
 

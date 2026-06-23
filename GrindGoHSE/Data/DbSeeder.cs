@@ -1,3 +1,4 @@
+using GrindGoHSE.Constants;
 using GrindGoHSE.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,29 @@ namespace GrindGoHSE.Data;
 public static class DbSeeder
 {
     public static async Task SeedAsync(AppDbContext db, CancellationToken cancellationToken = default)
+    {
+        await SeedAdminAsync(db, cancellationToken);
+        await SeedMenuAsync(db, cancellationToken);
+    }
+
+    private static async Task SeedAdminAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Users.AnyAsync(u => u.Role == UserRoles.Admin, cancellationToken))
+            return;
+
+        db.Users.Add(new AppUser
+        {
+            Name = "Администратор",
+            PhoneNumber = "+79990000000",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
+            Language = "ru",
+            Role = UserRoles.Admin
+        });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedMenuAsync(AppDbContext db, CancellationToken cancellationToken)
     {
         if (await db.Products.AnyAsync(cancellationToken))
             return;
