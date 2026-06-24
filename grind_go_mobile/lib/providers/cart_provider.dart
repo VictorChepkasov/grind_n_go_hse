@@ -21,8 +21,7 @@ class CartProvider extends ChangeNotifier {
     required int quantity,
   }) {
     final existingIndex = _items.indexWhere(
-      (item) =>
-          item.product.id == product.id && item.size.name == size.name,
+      (item) => item.size.id == size.id,
     );
 
     if (existingIndex >= 0) {

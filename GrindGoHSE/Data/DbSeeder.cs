@@ -1,4 +1,6 @@
+using GrindGoHSE.Constants;
 using GrindGoHSE.Data.Entities;
+using GrindGoHSE.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrindGoHSE.Data;
@@ -55,6 +57,26 @@ public static class DbSeeder
 
             db.Products.Add(product);
         }
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public static async Task SeedBaristaAsync(
+        AppDbContext db,
+        IPasswordHasher passwordHasher,
+        CancellationToken cancellationToken = default)
+    {
+        if (await db.Users.AnyAsync(u => u.Role == UserRoles.Barista, cancellationToken))
+            return;
+
+        db.Users.Add(new AppUser
+        {
+            Name = "Бариста",
+            PhoneNumber = "+79991112233",
+            PasswordHash = passwordHasher.Hash("barista123"),
+            Role = UserRoles.Barista,
+            Language = "ru"
+        });
 
         await db.SaveChangesAsync(cancellationToken);
     }

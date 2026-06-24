@@ -23,7 +23,6 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late int _selectedSizeIndex;
   int _quantity = 1;
-  bool _isFavorite = false;
 
   @override
   void initState() {
@@ -78,11 +77,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _ProductImageHeader(
-              product: product,
-              isFavorite: _isFavorite,
               onBack: () => Navigator.of(context).pop(),
-              onToggleFavorite: () =>
-                  setState(() => _isFavorite = !_isFavorite),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -175,16 +170,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
 class _ProductImageHeader extends StatelessWidget {
   const _ProductImageHeader({
-    required this.product,
-    required this.isFavorite,
     required this.onBack,
-    required this.onToggleFavorite,
   });
 
-  final Product product;
-  final bool isFavorite;
   final VoidCallback onBack;
-  final VoidCallback onToggleFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -202,17 +191,6 @@ class _ProductImageHeader extends StatelessWidget {
             onPressed: onBack,
           ),
         ),
-        Positioned(
-          top: 12,
-          right: 12,
-          child: _CircleIconButton(
-            icon: isFavorite
-                ? Icons.favorite_rounded
-                : Icons.favorite_border_rounded,
-            onPressed: onToggleFavorite,
-            iconColor: isFavorite ? AppColors.error : AppColors.textPrimary,
-          ),
-        ),
       ],
     );
   }
@@ -222,12 +200,10 @@ class _CircleIconButton extends StatelessWidget {
   const _CircleIconButton({
     required this.icon,
     required this.onPressed,
-    this.iconColor,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
-  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +221,7 @@ class _CircleIconButton extends StatelessWidget {
           child: Icon(
             icon,
             size: 22,
-            color: iconColor ?? AppColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
       ),

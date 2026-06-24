@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../screens/support_screen.dart';
 import '../theme/app_colors.dart';
 
 class ReportProblemLink extends StatelessWidget {
@@ -9,9 +10,9 @@ class ReportProblemLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Форма обратной связи будет добавлена позже'),
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const SupportScreen(),
           ),
         );
       },

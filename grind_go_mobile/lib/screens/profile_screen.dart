@@ -36,6 +36,24 @@ class ProfileScreen extends StatelessWidget {
               Text(user?.name ?? 'Пользователь', style: textTheme.headlineSmall),
               const SizedBox(height: 4),
               Text(user?.phone ?? '', style: textTheme.bodyMedium),
+              if (user?.isBarista ?? false) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.coffee.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Бариста',
+                    style: textTheme.labelMedium?.copyWith(
+                      color: AppColors.coffee,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
               const Spacer(),
               SizedBox(
                 width: double.infinity,

@@ -50,7 +50,21 @@ public class AuthService(
         return ToAuthResponse(user, jwtTokenService.CreateToken(user));
     }
 
-    private static string NormalizePhone(string phone) => phone.Trim();
+    private static string NormalizePhone(string phone)
+    {
+        var digits = new string(phone.Where(char.IsDigit).ToArray());
+
+        if (digits.Length == 10)
+            return "+7" + digits;
+
+        if (digits.Length == 11 && digits.StartsWith('7'))
+            return "+" + digits;
+
+        if (digits.Length == 11 && digits.StartsWith('8'))
+            return "+7" + digits[1..];
+
+        return phone.Trim();
+    }
 
     private static AuthResponse ToAuthResponse(AppUser user, string token) => new()
     {

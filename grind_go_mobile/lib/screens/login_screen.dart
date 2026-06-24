@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import '../core/api_exception.dart';
 import '../core/auth_navigation.dart';
 import '../core/phone_input.dart';
-import '../data/mock_auth_repository.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_logo.dart';
@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         completeAuthFlow(context);
       }
-    } on MockAuthException catch (error) {
+    } on ApiException catch (error) {
       setState(() => _errorMessage = error.message);
     } finally {
       if (mounted) {
