@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SectionName));
+builder.Services.Configure<FirebaseSettings>(builder.Configuration.GetSection(FirebaseSettings.SectionName));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -52,7 +53,17 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IBaristaProductService, BaristaProductService>();
-builder.Services.AddScoped<INotificationService, NoOpNotificationService>();
+builder.Services.AddScoped<DeviceTokenService>();
+
+var firebaseSettings = builder.Configuration.GetSection(FirebaseSettings.SectionName).Get<FirebaseSettings>() ?? new FirebaseSettings();
+var firebaseKeyPath = Path.IsPathRooted(firebaseSettings.ServiceAccountPath)
+    ? firebaseSettings.ServiceAccountPath
+    : Path.Combine(builder.Environment.ContentRootPath, firebaseSettings.ServiceAccountPath);
+
+if (firebaseSettings.Enabled && File.Exists(firebaseKeyPath))
+    builder.Services.AddScoped<INotificationService, FcmNotificationService>();
+else
+    builder.Services.AddScoped<INotificationService, NoOpNotificationService>();
 
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
     ?? throw new InvalidOperationException("Секция Jwt не настроена в appsettings.json.");
@@ -99,8 +110,37 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-    await DbSeeder.SeedAsync(db);
+
+    if (!await db.Database.CanConnectAsync())
+        throw new InvalidOperationException(
+            "Не удалось подключиться к БД. Запустите PostgreSQL и выполните sql/create_db.sql.");
+
+    if (args.Contains("--reset-menu"))
+    {
+        await DbSeeder.ResetMenuAsync(db);
+        Console.WriteLine("Меню пересоздано.");
+    }
+    else
+        await DbSeeder.SeedAsync(db);
+
+    if (args.Contains("--seed-photos"))
+    {
+        var photosPath = builder.Configuration["ProductPhotosPath"]
+            ?? throw new InvalidOperationException("Укажите ProductPhotosPath в appsettings.json.");
+        await ProductPhotoSeeder.SeedPhotosAsync(db, photosPath);
+    }
+}
+
+if (args.Contains("--reset-menu") || args.Contains("--seed-photos"))
+    return;
+
+if (app.Environment.IsDevelopment())
+{
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        foreach (var url in app.Urls)
+            Console.WriteLine($"Swagger: {url.TrimEnd('/')}/swagger");
+    });
 }
 
 app.Run();

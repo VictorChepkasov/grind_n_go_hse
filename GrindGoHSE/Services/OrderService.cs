@@ -72,7 +72,12 @@ public class OrderService(AppDbContext db, INotificationService notifications) :
         await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
-        await notifications.NotifyBaristaNewOrderAsync(order.OrderId, cancellationToken);
+        await notifications.NotifyOrderStatusAsync(
+            order.OrderId,
+            userId,
+            OrderStatuses.Created,
+            notifyBaristas: true,
+            cancellationToken);
 
         return await MapOrderAsync(order.OrderId, includeClientName: false, cancellationToken)
             ?? throw new InvalidOperationException("Не удалось загрузить созданный заказ.");
@@ -160,10 +165,11 @@ public class OrderService(AppDbContext db, INotificationService notifications) :
         order.Status = newStatus;
         await db.SaveChangesAsync(cancellationToken);
 
-        await notifications.NotifyClientOrderStatusChangedAsync(
-            order.UserId,
+        await notifications.NotifyOrderStatusAsync(
             order.OrderId,
+            order.UserId,
             newStatus,
+            notifyBaristas: false,
             cancellationToken);
 
         return await MapOrderAsync(orderId, includeClientName: true, cancellationToken);
