@@ -21,7 +21,7 @@ const mockProducts = <Product>[
       ProductSize(name: 'M', price: 180),
       ProductSize(name: 'L', price: 210),
     ],
-    description: 'Эспresso с нежной молочной пенкой.',
+    description: 'Эспрессо с нежной молочной пенкой.',
   ),
   Product(
     id: 3,
@@ -31,7 +31,7 @@ const mockProducts = <Product>[
       ProductSize(name: 'M', price: 190),
       ProductSize(name: 'L', price: 220),
     ],
-    description: 'Двойной эспresso с бархатистым молоком.',
+    description: 'Двойной эспрессо с бархатистым молоком.',
   ),
   Product(
     id: 4,
@@ -61,7 +61,7 @@ const mockProducts = <Product>[
       ProductSize(name: 'M', price: 140),
       ProductSize(name: 'L', price: 160),
     ],
-    description: 'Эспresso, разбавленный горячей водой.',
+    description: 'Эспрессо, разбавленный горячей водой.',
   ),
 ];
 

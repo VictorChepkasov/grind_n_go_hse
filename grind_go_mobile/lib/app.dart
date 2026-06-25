@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
+import 'screens/barista_shell.dart';
 import 'screens/main_shell.dart';
 import 'screens/welcome_screen.dart';
 import 'theme/theme.dart';
@@ -32,12 +33,16 @@ class _AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAuthenticated = context.watch<AuthProvider>().isAuthenticated;
+    final user = context.watch<AuthProvider>().user;
 
-    if (isAuthenticated) {
-      return const MainShell();
+    if (user == null) {
+      return const WelcomeScreen();
     }
 
-    return const WelcomeScreen();
+    if (user.isBarista) {
+      return const BaristaShell();
+    }
+
+    return const MainShell();
   }
 }

@@ -5,7 +5,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../core/auth_navigation.dart';
 import '../core/phone_input.dart';
-import '../data/mock_auth_repository.dart';
+import '../core/api_exception.dart';
+import '../data/auth_repository.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_logo.dart';
@@ -55,7 +56,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (mounted) {
         completeAuthFlow(context);
       }
-    } on MockAuthException catch (error) {
+    } on AuthException catch (error) {
+      setState(() => _errorMessage = error.message);
+    } on ApiException catch (error) {
       setState(() => _errorMessage = error.message);
     } finally {
       if (mounted) {
@@ -103,7 +106,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'вы в одном шаге от вашего любимого напитка',
+                  'Вы в одном шаге от вашего любимого напитка',
                   textAlign: TextAlign.center,
                   style: textTheme.bodyMedium?.copyWith(
                     color: AppColors.accentDark,
@@ -130,8 +133,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _submit(),
                   validator: (value) {
-                    if (value == null || value.length < 4) {
-                      return 'Пароль — минимум 4 символа';
+                    if (value == null || value.length < 6) {
+                      return 'Пароль — минимум 6 символов';
                     }
                     return null;
                   },

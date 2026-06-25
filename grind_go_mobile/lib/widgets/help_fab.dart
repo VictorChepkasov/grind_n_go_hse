@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../screens/support_screen.dart';
+
 class HelpFab extends StatelessWidget {
   const HelpFab({super.key});
 
@@ -7,8 +9,10 @@ class HelpFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Справка будет добавлена позже')),
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => const SupportScreen(),
+          ),
         );
       },
       child: const Icon(Icons.help_outline_rounded),

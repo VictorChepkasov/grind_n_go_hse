@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/api_config.dart';
 import '../models/product.dart';
 import '../models/product_size.dart';
 import '../providers/cart_provider.dart';
@@ -23,7 +24,6 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late int _selectedSizeIndex;
   int _quantity = 1;
-  bool _isFavorite = false;
 
   @override
   void initState() {
@@ -74,69 +74,76 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       floatingActionButtonLocation: _ProductDetailFabLocation(),
       body: SafeArea(
         bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            _ProductImageHeader(
-              product: product,
-              isFavorite: _isFavorite,
-              onBack: () => Navigator.of(context).pop(),
-              onToggleFavorite: () =>
-                  setState(() => _isFavorite = !_isFavorite),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      style: textTheme.headlineLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '₽${_totalPrice.toStringAsFixed(0)}',
-                      style: textTheme.labelLarge?.copyWith(
-                        fontSize: 22,
-                        color: AppColors.accentDark,
-                      ),
-                    ),
-                    if (_quantity > 1) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        '₽${_unitPrice.toStringAsFixed(0)} × $_quantity',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 120),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ProductImage(product: product),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name,
+                          style: textTheme.headlineLarge,
                         ),
-                      ),
-                    ],
-                    const SizedBox(height: 28),
-                    Text('Размер', style: textTheme.titleMedium),
-                    const SizedBox(height: 12),
-                    _SizeSelector(
-                      sizes: product.sizes,
-                      selectedIndex: _selectedSizeIndex,
-                      onSelected: (index) =>
-                          setState(() => _selectedSizeIndex = index),
+                        const SizedBox(height: 8),
+                        Text(
+                          '₽${_totalPrice.toStringAsFixed(0)}',
+                          style: textTheme.labelLarge?.copyWith(
+                            fontSize: 22,
+                            color: AppColors.accentDark,
+                          ),
+                        ),
+                        if (_quantity > 1) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            '₽${_unitPrice.toStringAsFixed(0)} × $_quantity',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 28),
+                        Text('Размер', style: textTheme.titleMedium),
+                        const SizedBox(height: 12),
+                        _SizeSelector(
+                          sizes: product.sizes,
+                          selectedIndex: _selectedSizeIndex,
+                          onSelected: (index) =>
+                              setState(() => _selectedSizeIndex = index),
+                        ),
+                        const SizedBox(height: 28),
+                        Text('Количество', style: textTheme.titleMedium),
+                        const SizedBox(height: 12),
+                        _QuantitySelector(
+                          quantity: _quantity,
+                          onDecrement: _decrementQuantity,
+                          onIncrement: _incrementQuantity,
+                        ),
+                        const SizedBox(height: 28),
+                        Text('Описание', style: textTheme.titleMedium),
+                        const SizedBox(height: 8),
+                        Text(
+                          product.description,
+                          style: textTheme.bodyMedium,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 28),
-                    Text('Количество', style: textTheme.titleMedium),
-                    const SizedBox(height: 12),
-                    _QuantitySelector(
-                      quantity: _quantity,
-                      onDecrement: _decrementQuantity,
-                      onIncrement: _incrementQuantity,
-                    ),
-                    const SizedBox(height: 28),
-                    Text('Описание', style: textTheme.titleMedium),
-                    const SizedBox(height: 8),
-                    Text(
-                      product.description,
-                      style: textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 12,
+              left: 12,
+              child: _CircleIconButton(
+                icon: Icons.arrow_back_rounded,
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ),
           ],
@@ -173,47 +180,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 }
 
-class _ProductImageHeader extends StatelessWidget {
-  const _ProductImageHeader({
-    required this.product,
-    required this.isFavorite,
-    required this.onBack,
-    required this.onToggleFavorite,
-  });
+class _ProductImage extends StatelessWidget {
+  const _ProductImage({required this.product});
 
   final Product product;
-  final bool isFavorite;
-  final VoidCallback onBack;
-  final VoidCallback onToggleFavorite;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        AspectRatio(
-          aspectRatio: 1,
-          child: const ProductPlaceholder(iconSize: 96),
+    if (product.hasPhoto) {
+      return AspectRatio(
+        aspectRatio: 1,
+        child: Image.network(
+          productPhotoUrl(product.id),
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =>
+              const ProductPlaceholder(iconSize: 96),
         ),
-        Positioned(
-          top: 12,
-          left: 12,
-          child: _CircleIconButton(
-            icon: Icons.arrow_back_rounded,
-            onPressed: onBack,
-          ),
-        ),
-        Positioned(
-          top: 12,
-          right: 12,
-          child: _CircleIconButton(
-            icon: isFavorite
-                ? Icons.favorite_rounded
-                : Icons.favorite_border_rounded,
-            onPressed: onToggleFavorite,
-            iconColor: isFavorite ? AppColors.error : AppColors.textPrimary,
-          ),
-        ),
-      ],
+      );
+    }
+
+    return const AspectRatio(
+      aspectRatio: 1,
+      child: ProductPlaceholder(iconSize: 96),
     );
   }
 }
@@ -222,12 +210,10 @@ class _CircleIconButton extends StatelessWidget {
   const _CircleIconButton({
     required this.icon,
     required this.onPressed,
-    this.iconColor,
   });
 
   final IconData icon;
   final VoidCallback onPressed;
-  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +231,7 @@ class _CircleIconButton extends StatelessWidget {
           child: Icon(
             icon,
             size: 22,
-            color: iconColor ?? AppColors.textPrimary,
+            color: AppColors.textPrimary,
           ),
         ),
       ),

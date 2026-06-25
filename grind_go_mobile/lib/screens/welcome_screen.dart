@@ -25,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
               const AppLogo(),
               const SizedBox(height: 28),
               Text(
-                'Grind&GO HSE',
+                'Grind & Go HSE',
                 style: textTheme.headlineLarge?.copyWith(
                   letterSpacing: 0.5,
                 ),

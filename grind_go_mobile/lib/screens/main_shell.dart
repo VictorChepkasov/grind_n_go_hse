@@ -34,17 +34,17 @@ class _MainShellState extends State<MainShell> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home_rounded),
-            label: 'Home',
+            label: 'Главная',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart_outlined),
             activeIcon: Icon(Icons.shopping_cart_rounded),
-            label: 'Cart',
+            label: 'Корзина',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),
             activeIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
+            label: 'Профиль',
           ),
         ],
       ),

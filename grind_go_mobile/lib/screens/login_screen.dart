@@ -5,7 +5,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../core/auth_navigation.dart';
 import '../core/phone_input.dart';
-import '../data/mock_auth_repository.dart';
+import '../core/api_exception.dart';
+import '../data/auth_repository.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_logo.dart';
@@ -54,7 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         completeAuthFlow(context);
       }
-    } on MockAuthException catch (error) {
+    } on AuthException catch (error) {
+      setState(() => _errorMessage = error.message);
+    } on ApiException catch (error) {
       setState(() => _errorMessage = error.message);
     } finally {
       if (mounted) {
@@ -102,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'вы в одном шаге от вашего любимого напитка',
+                  'Вы в одном шаге от вашего любимого напитка',
                   textAlign: TextAlign.center,
                   style: textTheme.bodyMedium?.copyWith(
                     color: AppColors.accentDark,

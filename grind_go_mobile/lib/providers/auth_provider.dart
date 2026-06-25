@@ -1,15 +1,17 @@
 import 'package:flutter/foundation.dart';
 
-import '../data/mock_auth_repository.dart';
+import '../data/auth_repository.dart';
 import '../models/user.dart';
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({MockAuthRepository? repository})
-      : _repository = repository ?? MockAuthRepository.instance;
+  AuthProvider({AuthRepository? repository})
+      : _repository = repository ?? AuthRepository();
 
-  final MockAuthRepository _repository;
+  final AuthRepository _repository;
 
   User? get user => _repository.currentUser;
+
+  String? get token => _repository.token;
 
   bool get isAuthenticated => _repository.isAuthenticated;
 

@@ -1,19 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/api_exception.dart';
+import '../data/order_repository.dart';
+import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/product_placeholder.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
-  void _placeOrder(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Оформление заказа будет доступно на следующем этапе'),
-      ),
-    );
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  final _orderRepository = OrderRepository();
+  bool _isSubmitting = false;
+
+  Future<void> _placeOrder() async {
+    final auth = context.read<AuthProvider>();
+    final cart = context.read<CartProvider>();
+    final token = auth.token;
+
+    if (token == null || cart.items.isEmpty) return;
+
+    if (cart.items.any((item) => item.size.productSizeId == null)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Не удалось оформить заказ. Обновите меню и добавьте напитки заново.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final order = await _orderRepository.createOrder(
+        token: token,
+        items: cart.items,
+      );
+
+      cart.clear();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Заказ #${order.id} отправлен бариста',
+          ),
+        ),
+      );
+    } on ApiException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Не удалось отправить заказ. Проверьте подключение к API.'),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
   }
 
   @override
@@ -42,7 +100,6 @@ class CartScreen extends StatelessWidget {
                       itemCount: cart.items.length,
                       separatorBuilder: (_, __) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
-                        final item = cart.items[index];
                         return _CartItemCard(
                           index: index,
                           onRemove: () => cart.removeItemAt(index),
@@ -52,7 +109,8 @@ class CartScreen extends StatelessWidget {
                   ),
                   _CartFooter(
                     totalPrice: cart.totalPrice,
-                    onPlaceOrder: () => _placeOrder(context),
+                    isSubmitting: _isSubmitting,
+                    onPlaceOrder: _placeOrder,
                   ),
                 ],
               ),
@@ -193,10 +251,12 @@ class _CartItemCard extends StatelessWidget {
 class _CartFooter extends StatelessWidget {
   const _CartFooter({
     required this.totalPrice,
+    required this.isSubmitting,
     required this.onPlaceOrder,
   });
 
   final double totalPrice;
+  final bool isSubmitting;
   final VoidCallback onPlaceOrder;
 
   @override
@@ -239,7 +299,7 @@ class _CartFooter extends StatelessWidget {
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: onPlaceOrder,
+              onPressed: isSubmitting ? null : onPlaceOrder,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.error,
                 foregroundColor: AppColors.textOnPrimary,
@@ -252,7 +312,16 @@ class _CartFooter extends StatelessWidget {
                   color: AppColors.textOnPrimary,
                 ),
               ),
-              child: const Text('Заказать'),
+              child: isSubmitting
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.textOnPrimary,
+                      ),
+                    )
+                  : const Text('Заказать'),
             ),
           ),
         ],

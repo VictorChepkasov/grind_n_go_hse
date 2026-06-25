@@ -6,6 +6,7 @@ class Product {
     required this.name,
     required this.sizes,
     required this.description,
+    this.hasPhoto = false,
     this.imageAsset,
   });
 
@@ -13,6 +14,7 @@ class Product {
   final String name;
   final List<ProductSize> sizes;
   final String description;
+  final bool hasPhoto;
   final String? imageAsset;
 
   double get basePrice =>

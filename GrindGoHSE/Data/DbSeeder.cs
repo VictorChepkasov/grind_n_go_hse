@@ -9,6 +9,7 @@ public static class DbSeeder
     public static async Task SeedAsync(AppDbContext db, CancellationToken cancellationToken = default)
     {
         await SeedAdminAsync(db, cancellationToken);
+        await SeedBaristaAsync(db, cancellationToken);
         await SeedMenuAsync(db, cancellationToken);
     }
 
@@ -34,6 +35,23 @@ public static class DbSeeder
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
             Language = "ru",
             Role = UserRoles.Admin
+        });
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    private static async Task SeedBaristaAsync(AppDbContext db, CancellationToken cancellationToken)
+    {
+        if (await db.Users.AnyAsync(u => u.Role == UserRoles.Barista, cancellationToken))
+            return;
+
+        db.Users.Add(new AppUser
+        {
+            Name = "Тестовый бариста",
+            PhoneNumber = "+79991112233",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("barista123"),
+            Language = "ru",
+            Role = UserRoles.Barista
         });
 
         await db.SaveChangesAsync(cancellationToken);
