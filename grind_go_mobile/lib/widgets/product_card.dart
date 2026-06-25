@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/product.dart';
 import '../theme/app_colors.dart';
-import 'product_placeholder.dart';
+import 'product_photo.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -32,7 +32,10 @@ class ProductCard extends StatelessWidget {
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: const ProductPlaceholder(iconSize: 48),
+                  child: ProductPhoto(
+                    product: product,
+                    iconSize: 48,
+                  ),
                 ),
               ),
               const SizedBox(height: 10),

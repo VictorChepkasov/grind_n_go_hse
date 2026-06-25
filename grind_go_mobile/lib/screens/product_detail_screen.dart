@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../core/api_config.dart';
 import '../models/product.dart';
 import '../models/product_size.dart';
 import '../providers/cart_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/help_fab.dart';
-import '../widgets/product_placeholder.dart';
+import '../widgets/product_photo.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({
@@ -187,21 +186,12 @@ class _ProductImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (product.hasPhoto) {
-      return AspectRatio(
-        aspectRatio: 1,
-        child: Image.network(
-          productPhotoUrl(product.id),
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) =>
-              const ProductPlaceholder(iconSize: 96),
-        ),
-      );
-    }
-
-    return const AspectRatio(
+    return AspectRatio(
       aspectRatio: 1,
-      child: ProductPlaceholder(iconSize: 96),
+      child: ProductPhoto(
+        product: product,
+        iconSize: 96,
+      ),
     );
   }
 }

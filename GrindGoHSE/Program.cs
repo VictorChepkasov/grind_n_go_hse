@@ -123,10 +123,18 @@ using (var scope = app.Services.CreateScope())
     else
         await DbSeeder.SeedAsync(db);
 
+    var photosPath = builder.Configuration["ProductPhotosPath"];
     if (args.Contains("--seed-photos"))
     {
-        var photosPath = builder.Configuration["ProductPhotosPath"]
-            ?? throw new InvalidOperationException("Укажите ProductPhotosPath в appsettings.json.");
+        if (string.IsNullOrWhiteSpace(photosPath))
+            throw new InvalidOperationException("Укажите ProductPhotosPath в appsettings.json.");
+
+        await ProductPhotoSeeder.SeedPhotosAsync(db, photosPath);
+    }
+    else if (!string.IsNullOrWhiteSpace(photosPath) &&
+             Directory.Exists(photosPath) &&
+             !await db.Products.AnyAsync(p => p.Photo != null))
+    {
         await ProductPhotoSeeder.SeedPhotosAsync(db, photosPath);
     }
 }

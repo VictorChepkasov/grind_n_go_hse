@@ -6,7 +6,7 @@ import '../data/order_repository.dart';
 import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 import '../theme/app_colors.dart';
-import '../widgets/product_placeholder.dart';
+import '../widgets/product_photo.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -185,7 +185,10 @@ class _CartItemCard extends StatelessWidget {
                 child: SizedBox(
                   width: 72,
                   height: 72,
-                  child: const ProductPlaceholder(iconSize: 32),
+                  child: ProductPhoto(
+                    product: item.product,
+                    iconSize: 32,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
