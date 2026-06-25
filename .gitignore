@@ -39,6 +39,10 @@ ScaffoldingReadMe.txt
 # dotenv environment variables file
 .env
 
+# Firebase service account (секретный ключ)
+firebase-service-account.json
+**/firebase-service-account.json
+
 # Others
 ~$*
 *~

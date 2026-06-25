@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 2026/06/24-17:49:00.640 9f18 Reusing MANIFEST C:\Users\0\AppData\Local\Temp\flutter_tools.7ceec8b9\flutter_tools_chrome_device.f326d83d\Default\Extension Rules/MANIFEST-000001
 2026/06/24-17:49:00.640 9f18 Recovering log #3
 2026/06/24-17:49:00.640 9f18 Reusing old log C:\Users\0\AppData\Local\Temp\flutter_tools.7ceec8b9\flutter_tools_chrome_device.f326d83d\Default\Extension Rules/000003.log 
+=======
+2026/06/05-12:08:33.569 743c Creating DB C:\Users\0\AppData\Local\Temp\flutter_tools.c6591401\flutter_tools_chrome_device.295d0b91\Default\Extension Rules since it was missing.
+2026/06/05-12:08:33.601 743c Reusing MANIFEST C:\Users\0\AppData\Local\Temp\flutter_tools.c6591401\flutter_tools_chrome_device.295d0b91\Default\Extension Rules/MANIFEST-000001
+>>>>>>> origin/main

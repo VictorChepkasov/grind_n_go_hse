@@ -13,9 +13,20 @@ public interface IOrderService
         long userId,
         CancellationToken cancellationToken = default);
 
+<<<<<<< HEAD
     Task<IReadOnlyList<OrderResponse>> GetBaristaQueueAsync(
         CancellationToken cancellationToken = default);
 
+=======
+    Task<OrderResponse?> GetOrderAsync(
+        long orderId,
+        long userId,
+        string userRole,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<OrderResponse>> GetQueueAsync(CancellationToken cancellationToken = default);
+
+>>>>>>> origin/main
     Task<OrderResponse?> UpdateStatusAsync(
         long orderId,
         string newStatus,

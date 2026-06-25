@@ -2,7 +2,10 @@ namespace GrindGoHSE.DTOs.Orders;
 
 public class OrderItemResponse
 {
+<<<<<<< HEAD
     public long ContainId { get; set; }
+=======
+>>>>>>> origin/main
     public long ProductSizeId { get; set; }
     public string ProductName { get; set; } = string.Empty;
     public string SizeName { get; set; } = string.Empty;

@@ -12,8 +12,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
   mask_text_input_formatter: ^2.9.0
+<<<<<<< HEAD
   http: ^1.2.2
   url_launcher: ^6.3.1
+=======
+>>>>>>> origin/main
 
 dev_dependencies:
   flutter_test:
