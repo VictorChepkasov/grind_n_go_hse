@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS orders (
     order_id     BIGSERIAL PRIMARY KEY,
     user_id      BIGINT NOT NULL,
     status       VARCHAR(30) NOT NULL DEFAULT 'создан'
-                 CHECK (status IN ('создан', 'в работе', 'отменён', 'готов к выдаче')),
+                 CHECK (status IN ('создан', 'в работе', 'отменён', 'готов к выдаче', 'выдан')),
     total_price  NUMERIC(10,2) NOT NULL DEFAULT 0,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 

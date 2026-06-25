@@ -173,6 +173,7 @@ class _BaristaQueueScreenState extends State<BaristaQueueScreen> {
             isUpdating: _updatingOrderId == order.id,
             onTake: () => _updateStatus(order, OrderStatuses.inProgress),
             onReady: () => _updateStatus(order, OrderStatuses.ready),
+            onIssue: () => _updateStatus(order, OrderStatuses.issued),
             onCancel: () => _updateStatus(order, OrderStatuses.cancelled),
           );
         },
@@ -187,6 +188,7 @@ class _OrderCard extends StatelessWidget {
     required this.isUpdating,
     required this.onTake,
     required this.onReady,
+    required this.onIssue,
     required this.onCancel,
   });
 
@@ -194,6 +196,7 @@ class _OrderCard extends StatelessWidget {
   final bool isUpdating;
   final VoidCallback onTake;
   final VoidCallback onReady;
+  final VoidCallback onIssue;
   final VoidCallback onCancel;
 
   @override
@@ -268,6 +271,11 @@ class _OrderCard extends StatelessWidget {
                   OutlinedButton(
                     onPressed: onReady,
                     child: const Text('Готов к выдаче'),
+                  ),
+                if (order.status == OrderStatuses.ready)
+                  OutlinedButton(
+                    onPressed: onIssue,
+                    child: const Text('Выдан'),
                   ),
                 if (order.status == OrderStatuses.created ||
                     order.status == OrderStatuses.inProgress)

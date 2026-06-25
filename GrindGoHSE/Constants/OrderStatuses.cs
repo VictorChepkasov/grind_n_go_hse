@@ -6,16 +6,20 @@ public static class OrderStatuses
     public const string InProgress = "в работе";
     public const string Cancelled = "отменён";
     public const string Ready = "готов к выдаче";
+    public const string Issued = "выдан";
 
-    public static readonly string[] All = [Created, InProgress, Cancelled, Ready];
+    public static readonly string[] All = [Created, InProgress, Cancelled, Ready, Issued];
 
-    public static readonly string[] ActiveQueue = [Created, InProgress];
+    public static readonly string[] BaristaQueue = [Created, InProgress, Ready];
+
+    public static readonly string[] ClientActive = [Created, InProgress, Ready];
 
     private static readonly Dictionary<string, HashSet<string>> AllowedTransitions = new()
     {
         [Created] = [InProgress, Cancelled],
         [InProgress] = [Ready, Cancelled],
-        [Ready] = [],
+        [Ready] = [Issued],
+        [Issued] = [],
         [Cancelled] = []
     };
 

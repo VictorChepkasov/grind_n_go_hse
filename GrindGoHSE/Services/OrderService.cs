@@ -89,7 +89,7 @@ public class OrderService(AppDbContext db, INotificationService notifications) :
     {
         var orderIds = await db.Orders
             .AsNoTracking()
-            .Where(o => o.UserId == userId)
+            .Where(o => o.UserId == userId && OrderStatuses.ClientActive.Contains(o.Status))
             .OrderByDescending(o => o.CreatedAt)
             .Select(o => o.OrderId)
             .ToListAsync(cancellationToken);
@@ -131,7 +131,7 @@ public class OrderService(AppDbContext db, INotificationService notifications) :
     {
         var orderIds = await db.Orders
             .AsNoTracking()
-            .Where(o => OrderStatuses.ActiveQueue.Contains(o.Status))
+            .Where(o => OrderStatuses.BaristaQueue.Contains(o.Status))
             .OrderBy(o => o.CreatedAt)
             .Select(o => o.OrderId)
             .ToListAsync(cancellationToken);

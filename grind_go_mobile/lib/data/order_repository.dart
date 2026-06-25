@@ -29,6 +29,14 @@ class OrderRepository {
     return Order.fromJson(json);
   }
 
+  Future<List<Order>> fetchMyOrders({required String token}) async {
+    final list = await _client.getJsonList('/api/orders/my', token: token);
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map(Order.fromJson)
+        .toList();
+  }
+
   Future<List<Order>> fetchBaristaQueue({required String token}) async {
     final list = await _client.getJsonList('/api/orders/queue', token: token);
     return list

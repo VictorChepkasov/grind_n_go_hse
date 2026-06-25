@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'cart_screen.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
+import '../providers/navigation_provider.dart';
 
-class MainShell extends StatefulWidget {
+class MainShell extends StatelessWidget {
   const MainShell({super.key});
-
-  @override
-  State<MainShell> createState() => _MainShellState();
-}
-
-class _MainShellState extends State<MainShell> {
-  int _currentIndex = 0;
 
   static const _screens = <Widget>[
     HomeScreen(),
@@ -22,14 +17,16 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final nav = context.watch<NavigationProvider>();
+
     return Scaffold(
       body: IndexedStack(
-        index: _currentIndex,
+        index: nav.currentIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        currentIndex: nav.currentIndex,
+        onTap: nav.selectTab,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),

@@ -5,6 +5,7 @@ import '../core/api_exception.dart';
 import '../data/order_repository.dart';
 import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
+import '../providers/navigation_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/product_photo.dart';
 
@@ -48,10 +49,11 @@ class _CartScreenState extends State<CartScreen> {
       cart.clear();
 
       if (!mounted) return;
+      context.read<NavigationProvider>().selectTab(2, refreshProfile: true);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Заказ #${order.id} отправлен бариста',
+            'Заказ #${order.id} отправлен. Статус — в профиле.',
           ),
         ),
       );
