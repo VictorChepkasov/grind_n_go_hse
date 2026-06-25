@@ -11,6 +11,25 @@ namespace GrindGoHSE.Controllers;
 [Authorize(Roles = UserRoles.Barista)]
 public class BaristaProductsController(IBaristaProductService baristaProductService) : ControllerBase
 {
+    [HttpGet]
+    public async Task<ActionResult<BaristaMenuResponse>> GetMenu(CancellationToken cancellationToken)
+    {
+        var menu = await baristaProductService.GetMenuAsync(cancellationToken);
+        return Ok(menu);
+    }
+
+    [HttpGet("{productId:long}/photo")]
+    public async Task<IActionResult> GetProductPhoto(
+        long productId,
+        CancellationToken cancellationToken)
+    {
+        var photo = await baristaProductService.GetProductPhotoAsync(productId, cancellationToken);
+        if (photo is null)
+            return NotFound(new { message = "Фото не найдено." });
+
+        return File(photo.Value.Data, photo.Value.ContentType);
+    }
+
     [HttpPatch("{productId:long}/availability")]
     public async Task<IActionResult> SetAvailability(
         long productId,

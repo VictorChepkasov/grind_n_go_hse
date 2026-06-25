@@ -1,3 +1,4 @@
+import '../core/api_exception.dart';
 import '../models/cart_item.dart';
 import '../models/order.dart';
 import 'api_client.dart';
@@ -57,5 +58,18 @@ class OrderRepository {
     );
 
     return Order.fromJson(json);
+  }
+
+  Future<Order?> fetchOrderById({
+    required String token,
+    required int orderId,
+  }) async {
+    try {
+      final json = await _client.getJson('/api/orders/$orderId', token: token);
+      return Order.fromJson(json);
+    } on ApiException catch (error) {
+      if (error.statusCode == 404) return null;
+      rethrow;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'barista_menu_screen.dart';
 import 'barista_queue_screen.dart';
 import 'profile_screen.dart';
 
@@ -14,6 +15,7 @@ class _BaristaShellState extends State<BaristaShell> {
   int _currentIndex = 0;
 
   static const _screens = <Widget>[
+    BaristaMenuScreen(),
     BaristaQueueScreen(),
     ProfileScreen(),
   ];
@@ -29,6 +31,11 @@ class _BaristaShellState extends State<BaristaShell> {
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant_menu_outlined),
+            activeIcon: Icon(Icons.restaurant_menu_rounded),
+            label: 'Меню',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long_outlined),
             activeIcon: Icon(Icons.receipt_long_rounded),

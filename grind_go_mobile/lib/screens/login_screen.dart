@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   late final MaskTextInputFormatter _phoneFormatter = createPhoneMaskFormatter();
   final _phoneController = TextEditingController(
-    text: '+7 (999) 000-00-00',
+    text: '',
   );
   final _passwordController = TextEditingController();
   bool _isLoading = false;

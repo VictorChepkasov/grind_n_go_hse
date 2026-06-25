@@ -5,3 +5,6 @@ const apiBaseUrl = String.fromEnvironment(
 
 String productPhotoUrl(int productId) =>
     '$apiBaseUrl/api/menu/products/$productId/photo';
+
+String baristaProductPhotoUrl(int productId) =>
+    '$apiBaseUrl/api/barista/products/$productId/photo';

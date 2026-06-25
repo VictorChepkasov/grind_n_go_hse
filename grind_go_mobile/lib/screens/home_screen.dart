@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../core/api_exception.dart';
@@ -17,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _menuRepository = MenuRepository();
+  Timer? _pollTimer;
 
   List<Product>? _products;
   String? _error;
@@ -26,6 +29,31 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadMenu();
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _refreshMenuSilently(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _refreshMenuSilently() async {
+    if (!mounted || _loading) return;
+
+    try {
+      final products = await _menuRepository.fetchProducts();
+      if (!mounted) return;
+      setState(() {
+        _products = products;
+        _error = null;
+      });
+    } catch (_) {
+      // Тихое обновление: ошибки не перекрывают уже загруженное меню.
+    }
   }
 
   Future<void> _loadMenu() async {

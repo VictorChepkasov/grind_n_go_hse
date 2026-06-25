@@ -10,11 +10,15 @@ class ProductPhoto extends StatelessWidget {
     required this.product,
     this.iconSize = 48,
     this.fit = BoxFit.cover,
+    this.photoUrl,
+    this.headers,
   });
 
   final Product product;
   final double iconSize;
   final BoxFit fit;
+  final String? photoUrl;
+  final Map<String, String>? headers;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +27,8 @@ class ProductPhoto extends StatelessWidget {
     }
 
     return Image.network(
-      productPhotoUrl(product.id),
+      photoUrl ?? productPhotoUrl(product.id),
+      headers: headers,
       fit: fit,
       width: double.infinity,
       height: double.infinity,

@@ -14,4 +14,9 @@ class NavigationProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void refreshProfileOrders() {
+    _profileRefreshToken++;
+    notifyListeners();
+  }
 }

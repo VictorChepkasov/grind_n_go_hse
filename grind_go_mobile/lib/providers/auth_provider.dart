@@ -5,15 +5,30 @@ import '../models/user.dart';
 
 class AuthProvider extends ChangeNotifier {
   AuthProvider({AuthRepository? repository})
-      : _repository = repository ?? AuthRepository();
+      : _repository = repository ?? AuthRepository() {
+    _restoreSession();
+  }
 
   final AuthRepository _repository;
+
+  bool _isRestoring = true;
+
+  bool get isRestoring => _isRestoring;
 
   User? get user => _repository.currentUser;
 
   String? get token => _repository.token;
 
   bool get isAuthenticated => _repository.isAuthenticated;
+
+  Future<void> _restoreSession() async {
+    try {
+      await _repository.restoreSession();
+    } finally {
+      _isRestoring = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> login({
     required String phone,
@@ -36,8 +51,8 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logout() {
-    _repository.logout();
+  Future<void> logout() async {
+    await _repository.logout();
     notifyListeners();
   }
 }

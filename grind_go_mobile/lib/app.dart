@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'core/app_messenger.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/navigation_provider.dart';
@@ -8,6 +9,7 @@ import 'screens/barista_shell.dart';
 import 'screens/main_shell.dart';
 import 'screens/welcome_screen.dart';
 import 'theme/theme.dart';
+import 'widgets/client_order_monitor.dart';
 
 class GrindGoApp extends StatelessWidget {
   const GrindGoApp({super.key});
@@ -21,6 +23,7 @@ class GrindGoApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
       ],
       child: MaterialApp(
+        scaffoldMessengerKey: rootScaffoldMessengerKey,
         title: 'Grind & Go',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
@@ -35,7 +38,15 @@ class _AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().user;
+    final auth = context.watch<AuthProvider>();
+
+    if (auth.isRestoring) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final user = auth.user;
 
     if (user == null) {
       return const WelcomeScreen();
@@ -45,6 +56,8 @@ class _AuthGate extends StatelessWidget {
       return const BaristaShell();
     }
 
-    return const MainShell();
+    return const ClientOrderMonitor(
+      child: MainShell(),
+    );
   }
 }

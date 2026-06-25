@@ -1,12 +1,18 @@
 import '../core/api_exception.dart';
+import '../core/auth_storage.dart';
 import '../core/phone_input.dart';
 import '../models/user.dart';
 import 'api_client.dart';
 
 class AuthRepository {
-  AuthRepository({ApiClient? client}) : _client = client ?? ApiClient();
+  AuthRepository({
+    ApiClient? client,
+    AuthStorage? storage,
+  })  : _client = client ?? ApiClient(),
+        _storage = storage ?? AuthStorage();
 
   final ApiClient _client;
+  final AuthStorage _storage;
 
   User? _currentUser;
 
@@ -15,6 +21,10 @@ class AuthRepository {
   String? get token => _currentUser?.token;
 
   bool get isAuthenticated => _currentUser != null;
+
+  Future<void> restoreSession() async {
+    _currentUser = await _storage.loadSession();
+  }
 
   Future<User> login({
     required String phone,
@@ -27,6 +37,7 @@ class AuthRepository {
 
     final user = _mapUser(json);
     _currentUser = user;
+    await _storage.saveSession(user);
     return user;
   }
 
@@ -44,6 +55,7 @@ class AuthRepository {
 
       final user = _mapUser(json);
       _currentUser = user;
+      await _storage.saveSession(user);
       return user;
     } on ApiException catch (error) {
       if (error.statusCode == 409) {
@@ -53,8 +65,9 @@ class AuthRepository {
     }
   }
 
-  void logout() {
+  Future<void> logout() async {
     _currentUser = null;
+    await _storage.clearSession();
   }
 
   User _mapUser(Map<String, dynamic> json) {
