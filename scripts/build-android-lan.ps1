@@ -16,8 +16,18 @@ Set-Location (Join-Path $projectRoot "grind_go_mobile")
 
 Write-Host "Sborka APK s API: $apiUrl" -ForegroundColor Green
 flutter build apk --dart-define=API_BASE_URL=$apiUrl
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "Oshibka sborki APK. Proverte vyvod vyshe." -ForegroundColor Red
+    exit $LASTEXITCODE
+}
 
 $apkPath = Join-Path (Get-Location) "build\app\outputs\flutter-apk\app-release.apk"
+if (-not (Test-Path $apkPath)) {
+    Write-Host ""
+    Write-Host "APK ne naiden posle sborki: $apkPath" -ForegroundColor Red
+    exit 1
+}
 Write-Host ""
 Write-Host "APK gotov:" -ForegroundColor Green
 Write-Host "  $apkPath" -ForegroundColor White

@@ -11,7 +11,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ProductSize> ProductSizes => Set<ProductSize>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-    public DbSet<DeviceToken> DeviceTokens => Set<DeviceToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -107,22 +106,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany(ps => ps.OrderItems)
                 .HasForeignKey(e => e.ProductSizeId)
                 .OnDelete(DeleteBehavior.Restrict);
-        });
-
-        modelBuilder.Entity<DeviceToken>(entity =>
-        {
-            entity.ToTable("device_tokens");
-            entity.HasKey(e => e.TokenId);
-            entity.Property(e => e.TokenId).HasColumnName("token_id");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-            entity.Property(e => e.FcmToken).HasColumnName("fcm_token");
-            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
-            entity.HasIndex(e => new { e.UserId, e.FcmToken }).IsUnique();
-
-            entity.HasOne(e => e.User)
-                .WithMany(u => u.DeviceTokens)
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

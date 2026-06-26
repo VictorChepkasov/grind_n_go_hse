@@ -2,12 +2,11 @@ using GrindGoHSE.Constants;
 using GrindGoHSE.Data;
 using GrindGoHSE.Data.Entities;
 using GrindGoHSE.DTOs.Orders;
-using GrindGoHSE.Services.Notifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrindGoHSE.Services;
 
-public class OrderService(AppDbContext db, INotificationService notifications) : IOrderService
+public class OrderService(AppDbContext db) : IOrderService
 {
     public async Task<OrderResponse> CreateOrderAsync(
         long userId,
@@ -71,13 +70,6 @@ public class OrderService(AppDbContext db, INotificationService notifications) :
         db.Orders.Add(order);
         await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
-
-        await notifications.NotifyOrderStatusAsync(
-            order.OrderId,
-            userId,
-            OrderStatuses.Created,
-            notifyBaristas: true,
-            cancellationToken);
 
         return await MapOrderAsync(order.OrderId, includeClientName: false, cancellationToken)
             ?? throw new InvalidOperationException("Не удалось загрузить созданный заказ.");
@@ -164,13 +156,6 @@ public class OrderService(AppDbContext db, INotificationService notifications) :
 
         order.Status = newStatus;
         await db.SaveChangesAsync(cancellationToken);
-
-        await notifications.NotifyOrderStatusAsync(
-            order.OrderId,
-            order.UserId,
-            newStatus,
-            notifyBaristas: false,
-            cancellationToken);
 
         return await MapOrderAsync(orderId, includeClientName: true, cancellationToken);
     }

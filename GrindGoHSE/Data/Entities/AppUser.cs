@@ -10,5 +10,4 @@ public class AppUser
     public string Role { get; set; } = "client";
 
     public ICollection<Order> Orders { get; set; } = [];
-    public ICollection<DeviceToken> DeviceTokens { get; set; } = [];
 }

@@ -2,7 +2,6 @@
 using GrindGoHSE.Data;
 using GrindGoHSE.Options;
 using GrindGoHSE.Services;
-using GrindGoHSE.Services.Notifications;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +10,6 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(JwtSettings.SectionName));
-builder.Services.Configure<FirebaseSettings>(builder.Configuration.GetSection(FirebaseSettings.SectionName));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -53,17 +51,6 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IBaristaProductService, BaristaProductService>();
-builder.Services.AddScoped<DeviceTokenService>();
-
-var firebaseSettings = builder.Configuration.GetSection(FirebaseSettings.SectionName).Get<FirebaseSettings>() ?? new FirebaseSettings();
-var firebaseKeyPath = Path.IsPathRooted(firebaseSettings.ServiceAccountPath)
-    ? firebaseSettings.ServiceAccountPath
-    : Path.Combine(builder.Environment.ContentRootPath, firebaseSettings.ServiceAccountPath);
-
-if (firebaseSettings.Enabled && File.Exists(firebaseKeyPath))
-    builder.Services.AddScoped<INotificationService, FcmNotificationService>();
-else
-    builder.Services.AddScoped<INotificationService, NoOpNotificationService>();
 
 var jwtSettings = builder.Configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
     ?? throw new InvalidOperationException("Секция Jwt не настроена в appsettings.json.");
